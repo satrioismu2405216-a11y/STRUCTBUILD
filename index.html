@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO & Google Indexing Meta Tags -->
+  <title>StructBuild - Pembelajaran Interaktif Statika Bangunan (SMK TKP Fase E)</title>
+  <meta name="description" content="StructBuild adalah media pembelajaran web interaktif Statika Bangunan dan Mekanika Rekayasa untuk SMK Teknik Konstruksi dan Perumahan Fase E. Belajar balok, rangka atap, jembatan, tumpuan fisik, dan gambar struktur mandiri.">
+  <meta name="keywords" content="Statika Bangunan, SMK TKP, Mekanika Rekayasa, Tumpuan Sendi Rol Jepit, Rangka Atap Kuda Kuda, Jembatan Warren, Gaya Lintang, Momen Lentur">
+  <meta name="author" content="StructBuild SMK TKP">
+  <meta name="theme-color" content="#f59e0b">
+
+  <!-- PWA Manifest untuk Google Chrome -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏗️</text></svg>">
+  
+  <!-- CSS Utama -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Three.js & OrbitControls (Offline-first) -->
+  <script src="js/three.min.js"></script>
+  <script>
+    if (typeof THREE === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');
+    }
+  </script>
+  <script src="js/OrbitControls.js"></script>
+  <script>
+    if (typeof THREE !== 'undefined' && typeof THREE.OrbitControls === 'undefined') {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"><\/script>');
+    }
+  </script>
+</head>
+<body>
+
+  <div id="app-container">
+    
+    <!-- ====================================================================
+         SIDEBAR NAVIGATION
+         ==================================================================== -->
+    <aside id="sidebar">
+      <div class="brand-header">
+        <div class="brand-icon">
+          <!-- Construction Beam Icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="5" width="20" height="4" rx="1"/>
+            <rect x="2" y="15" width="20" height="4" rx="1"/>
+            <line x1="12" y1="9" x2="12" y2="15"/>
+            <line x1="6" y1="9" x2="6" y2="15"/>
+            <line x1="18" y1="9" x2="18" y2="15"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>StructBuild</h1>
+          <span class="brand-tag">SMK TKP • FASE E</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-label">Menu Utama</div>
+        
+        <a class="nav-item active" data-view="home">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <span>Beranda</span>
+        </a>
+
+        <a class="nav-item" data-view="components">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
+          </div>
+          <span>Kenali Struktur</span>
+          <span class="badge-tag">3D</span>
+        </a>
+
+        <a class="nav-item" data-view="bearings">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><line x1="5" y1="17" x2="10" y2="13"/><line x1="19" y1="17" x2="14" y2="13"/></svg>
+          </div>
+          <span>Tumpuan (Perletakan)</span>
+        </a>
+
+        <div class="nav-label">Laboratorium Eksperimen</div>
+
+        <a class="nav-item" data-view="simulation">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <span>Simulasi Struktur 3D</span>
+          <span class="badge-tag" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">3 Tipe</span>
+        </a>
+
+        <!-- FITUR BARU: STUDIO GAMBAR MANDIRI -->
+        <a class="nav-item" data-view="sandbox">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+          </div>
+          <span>Studio Gambar Mandiri</span>
+          <span class="badge-tag" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">Rancang</span>
+        </a>
+
+        <a class="nav-item" data-view="diagrams">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <span>Diagram Gaya (N-V-M)</span>
+        </a>
+
+        <div class="nav-label">Evaluasi & Progres</div>
+
+        <a class="nav-item" data-view="quiz">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <span>Kuis Statika</span>
+        </a>
+
+        <a class="nav-item" data-view="progress">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          </div>
+          <span>Progres Belajar</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="curriculum-badge">
+          <div class="badge-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="badge-info">
+            <h4>Kurikulum Merdeka</h4>
+            <p>Dasar Konstruksi Gedung</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         MAIN CONTENT AREA
+         ==================================================================== -->
+    <main id="main-content">
+      
+      <!-- Top Navbar -->
+      <header class="top-navbar">
+        <div class="top-left">
+          <button class="btn-sidebar-toggle" id="btn-toggle-sidebar" aria-label="Toggle Sidebar">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          
+          <div class="breadcrumb-area">
+            <span class="breadcrumb-root">StructBuild</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current" id="breadcrumb-page-title">Beranda Utama</span>
+          </div>
+        </div>
+
+        <div class="top-right">
+          <div class="learning-mode-indicator">
+            <div class="pulse-dot"></div>
+            <span>Guided Discovery Learning</span>
+          </div>
+
+          <button class="btn-quick-guide" id="btn-open-chrome-guide" style="border-color: rgba(245, 158, 11, 0.4);">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span>Akses Google Chrome / Online</span>
+          </button>
+
+          <button class="btn-quick-guide" id="btn-open-quick-guide">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            <span>Petunjuk</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Viewport Pages Container -->
+      <div class="content-viewport">
+        
+        <!-- ================================================================
+             VIEW 1: BERANDA
+             ================================================================ -->
+        <section class="page-view active" id="view-home">
+          
+          <div class="hero-section">
+            <div class="hero-tagline">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span>Platform Pembelajaran Interaktif TKP Fase E</span>
+            </div>
+
+            <h2 class="hero-title">
+              Pahami Struktur dengan <span>Melihat</span>, <span>Mencoba</span>, dan <span>Menemukan</span>.
+            </h2>
+
+            <p class="hero-description">
+              Bukan sekadar rumus atau diagram 2D biasa. StructBuild mengajak siswa SMK mengamati <strong>balok portal gedung</strong>, <strong>kuda-kuda rangka atap</strong>, dan <strong>jembatan rangka baja</strong> secara visual 3D interaktif. Siswa bahkan dapat <strong>menggambar struktur sendiri</strong> dan meletakkan beban bebas untuk menguji reaksi tumpuan!
+            </p>
+
+            <div class="hero-actions">
+              <button class="btn-primary" onclick="window.appRouter.navigateTo('simulation')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>Mulai Simulasi 3D (3 Tipe Struktur)</span>
+              </button>
+
+              <button class="btn-secondary" onclick="window.appRouter.navigateTo('sandbox')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
+                <span>Studio Gambar Sendiri</span>
+              </button>
+
+              <button class="btn-secondary" onclick="window.appRouter.navigateTo('components')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                <span>Kenali Rangka Gedung</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Alur Guided Discovery Learning -->
+          <div class="section-header">
+            <h3>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Siklus Belajar: Guided Discovery Learning
+            </h3>
+            <p>7 tahapan belajar yang melatih kemampuan analisis teknik tanpa menghafal rumus secara buta.</p>
+          </div>
+
+          <div class="discovery-flow-container">
+            <div class="flow-step-card">
+              <span class="step-number">01</span>
+              <div class="step-icon-wrapper">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+              </div>
+              <h4>AMATI</h4>
+              <p>Observasi balok, rangka atap, jembatan, dan tumpuan fisik.</p>
+            </div>
+
+            <div class="flow-step-card">
+              <span class="step-number">02</span>
+              <div class="step-icon-wrapper">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+              </div>
+              <h4>IDENTIFIKASI</h4>
+              <p>Kenali letak tumpuan A, B, arah beban gravitasi dan buhul.</p>
+            </div>
+
+            <div class="flow-step-card">
+              <span class="step-number">03</span>
+              <div class="step-icon-wrapper">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/></svg>
+              </div>
+              <h4>PREDIKSI</h4>
+              <p>Tebak tumpuan mana yang akan menanggung reaksi lebih besar.</p>
+            </div>
+
+            <div class="flow-step-card">
+              <span class="step-number">04</span>
+              <div class="step-icon-wrapper">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+              </div>
+              <h4>MANIPULASI</h4>
+              <p>Klik titik tertentu atau geser slider untuk memindahkan beban.</p>
+            </div>
+
+            <div class="flow-step-card">
+              <span class="step-number">05</span>
+              <div class="step-icon-wrapper">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/></svg>
+              </div>
+              <h4>HITUNG</h4>
+              <p>Coba hitung mandiri menggunakan hukum momen statis ΣM = 0.</p>
+            </div>
+
+            <div class="flow-step-card">
+              <span class="step-number">06</span>
+              <div class="step-icon-wrapper">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+              <h4>VERIFIKASI</h4>
+              <p>Bandingkan dengan visual panah reaksi dan kelengkungan 3D.</p>
+            </div>
+
+            <div class="flow-step-card">
+              <span class="step-number">07</span>
+              <div class="step-icon-wrapper">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>
+              </div>
+              <h4>REFLEKSI</h4>
+              <p>Simpulkan hukum kesetimbangan yang ditemukan sendiri.</p>
+            </div>
+          </div>
+
+          <!-- Feature Cards Grid -->
+          <div class="feature-cards-grid">
+            
+            <div class="feature-portal-card" data-view="simulation">
+              <div class="feature-top">
+                <div class="feature-icon-badge simulation">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <h4>Simulasi Balok, Atap & Jembatan</h4>
+                <p>Eksplorasi 3 tipe struktur konstruksi nyata: Balok profil I, Kuda-kuda atap segitiga, dan Jembatan rangka Warren 3D. Letakkan beban di titik tertentu!</p>
+              </div>
+              <div class="feature-footer-action">
+                <span>Masuk Lab 3D Multi-Struktur</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+            </div>
+
+            <div class="feature-portal-card" data-view="sandbox">
+              <div class="feature-top">
+                <div class="feature-icon-badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
+                </div>
+                <h4>Studio Rancang Sendiri (Sandbox)</h4>
+                <p>Fitur baru untuk siswa! Gambar titik buhul, hubungkan batang baja, pasang tumpuan sendi/rol/jepit, dan letakkan beban bebas untuk disimulasikan.</p>
+              </div>
+              <div class="feature-footer-action">
+                <span>Buka Studio Gambar</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+            </div>
+
+            <div class="feature-portal-card" data-view="bearings">
+              <div class="feature-top">
+                <div class="feature-icon-badge bearings">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/></svg>
+                </div>
+                <h4>Tumpuan Nyata vs Simbol</h4>
+                <p>Bandingkan bentuk fisik tumpuan sendi, rol, dan jepit di proyek konstruksi dengan simbol teknik 2D-nya. Uji derajat kebebasan gerak secara interaktif!</p>
+              </div>
+              <div class="feature-footer-action">
+                <span>Eksplorasi Tumpuan</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+            </div>
+
+            <div class="feature-portal-card" data-view="quiz">
+              <div class="feature-top">
+                <div class="feature-icon-badge quiz">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/></svg>
+                </div>
+                <h4>Kuis Kasus Konstruksi</h4>
+                <p>Uji pemahamanmu lewat soal berbasis visual SVG, analisis pemuaian jembatan, pergeseran beban, dan pencegahan keretakan balok beton bertulang.</p>
+              </div>
+              <div class="feature-footer-action">
+                <span>Tantang Kemampuan</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ================================================================
+             VIEW 2: KENALI STRUKTUR (3D BUILDING FRAME)
+             ================================================================ -->
+        <section class="page-view" id="view-components">
+          
+          <div class="section-header">
+            <h3>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
+              Kenali Struktur: Model Portal Gedung 3D
+            </h3>
+            <p>Klik elemen struktur pada model 3D di bawah ini untuk mengidentifikasi fungsi, gaya dalam, dan karakteristik lapangan.</p>
+          </div>
+
+          <div class="split-layout-3d">
+            
+            <div class="canvas-viewport-panel">
+              <div class="viewport-overlay-controls">
+                <div class="control-badge">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <span>Model Gedung Baja & Beton 2 Lantai</span>
+                </div>
+
+                <div class="control-actions-group">
+                  <button class="btn-viewport-action" onclick="if(window.buildingComponents3D) window.buildingComponents3D.resetCamera()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    <span>Reset Sudut Pandang</span>
+                  </button>
+                </div>
+              </div>
+
+              <div id="components-3d-canvas" class="three-canvas-container"></div>
+
+              <div class="viewport-hint-bottom">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <span>Putar: Klik Kiri & Geser • Zoom: Scroll • <strong>Klik elemen langsung pada model untuk inspeksi</strong></span>
+              </div>
+            </div>
+
+            <div class="details-side-panel">
+              <div>
+                <span class="info-label">Pilih Elemen Struktur:</span>
+                <div class="component-buttons-strip">
+                  <button class="btn-comp-selector active" data-type="kolom">Kolom</button>
+                  <button class="btn-comp-selector" data-type="balok">Balok Induk</button>
+                  <button class="btn-comp-selector" data-type="pelat">Pelat Lantai</button>
+                  <button class="btn-comp-selector" data-type="sambungan">Sambungan</button>
+                  <button class="btn-comp-selector" data-type="tumpuan">Tumpuan Dasar</button>
+                  <button class="btn-comp-selector" data-type="beban">Beban Hidup</button>
+                </div>
+              </div>
+
+              <div class="component-detail-card">
+                <div class="component-header">
+                  <h3 id="comp-detail-title">Kolom Struktur (Portal Frame)</h3>
+                  <span class="component-role-tag">Elemen Tekan Vertikal</span>
+                </div>
+
+                <div class="component-construction-info">
+                  <div class="info-row">
+                    <span class="info-label">Deskripsi & Peran Lapangan:</span>
+                    <p class="info-val" id="comp-detail-desc">
+                      Elemen struktur vertikal yang berfungsi memikul beban aksial tekan dan momen lentur dari balok, kemudian menyalurkannya secara aman menuju pondasi gedung.
+                    </p>
+                  </div>
+
+                  <div class="info-row">
+                    <span class="info-label">Gaya Dalam & Mekanika Statika:</span>
+                    <p class="info-val" id="comp-detail-mechanics" style="color: #38bdf8;">
+                      Gaya Dalam Utama: Tekan Aksial (N) & Momen Lentur (M akibat gempa/angin). Bahaya utama: Tekuk (Buckling).
+                    </p>
+                  </div>
+
+                  <div class="info-row">
+                    <span class="info-label">Karakteristik Fisik Proyek:</span>
+                    <p class="info-val" id="comp-detail-real" style="color: #fbbf24;">
+                      Menggunakan profil Baja WF (Wide Flange) atau Beton Bertulang K-300 dengan sengkang tahan gempa.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="load-transfer-chain">
+                  <h4>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></svg>
+                    Jalur Penyaluran Beban (Load Path):
+                  </h4>
+                  <div class="chain-steps">
+                    <div class="chain-node">Beban Penghuni</div>
+                    <span>➔</span>
+                    <div class="chain-node">Pelat Lantai</div>
+                    <span>➔</span>
+                    <div class="chain-node">Balok Induk</div>
+                    <span>➔</span>
+                    <div class="chain-node highlight">Kolom Struktur</div>
+                    <span>➔</span>
+                    <div class="chain-node">Pondasi</div>
+                    <span>➔</span>
+                    <div class="chain-node">Tanah Keras</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ================================================================
+             VIEW 3: TUMPUAN (SENDI, ROL, JEPIT)
+             ================================================================ -->
+        <section class="page-view" id="view-bearings">
+          
+          <div class="section-header">
+            <h3>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/></svg>
+              Eksplorasi Tumpuan: Bentuk Nyata vs Simbol Statika Teknik
+            </h3>
+            <p>Pahami mengapa tumpuan sendi, rol, dan jepit memiliki derajat kebebasan dan reaksi yang berbeda dalam konstruksi nyata.</p>
+          </div>
+
+          <div class="bearings-comparison-container">
+            <div class="bearing-cards-grid">
+              
+              <!-- Sendi -->
+              <div class="bearing-interactive-card">
+                <div class="bearing-card-header">
+                  <div>
+                    <h3>1. Tumpuan Sendi (Pin)</h3>
+                    <p style="font-size: 0.82rem; color: var(--text-muted);">Hinge Bearing / Pinned Joint</p>
+                  </div>
+                  <span class="bearing-type-badge badge-sendi">2 Reaksi (Rv & Rh)</span>
+                </div>
+                <div class="bearing-3d-visual" id="bearing-3d-sendi"></div>
+                <div class="dof-analysis-box">
+                  <h4>Derajat Kebebasan (Gerak):</h4>
+                  <div class="dof-grid">
+                    <div class="dof-item"><span class="dof-title">Vertikal (Y)</span><span class="dof-status status-reaksi">🔒 Tertahan (Rv)</span></div>
+                    <div class="dof-item"><span class="dof-title">Horizontal (X)</span><span class="dof-status status-reaksi">🔒 Tertahan (Rh)</span></div>
+                    <div class="dof-item"><span class="dof-title">Rotasi (M)</span><span class="dof-status status-bebas">🔓 Bebas Berputar</span></div>
+                  </div>
+                </div>
+                <div class="bearing-construction-case">
+                  <strong>Kasus Nyata:</strong> Digunakan pada pangkal jembatan rangka dan tumpuan kuda-kuda atap baja. Menahan pergeseran angin namun membiarkan balok melentur tanpa timbul momen jepit perusak pin.
+                </div>
+                <div class="bearing-test-bar">
+                  <button class="btn-test-dof" onclick="window.bearingLab.testMovement('sendi', 'horizontal', 'sendi-test-feedback')">Uji Dorong Horisontal</button>
+                  <button class="btn-test-dof" onclick="window.bearingLab.testMovement('sendi', 'rotasi', 'sendi-test-feedback')">Uji Rotasi Lentur</button>
+                </div>
+                <div id="sendi-test-feedback" style="font-size: 0.8rem; min-height: 48px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">
+                  <em>Klik tombol uji di atas untuk melihat respon mekanis tumpuan sendi.</em>
+                </div>
+              </div>
+
+              <!-- Rol -->
+              <div class="bearing-interactive-card">
+                <div class="bearing-card-header">
+                  <div>
+                    <h3>2. Tumpuan Rol (Roller)</h3>
+                    <p style="font-size: 0.82rem; color: var(--text-muted);">Roller Bearing / Expansion Joint</p>
+                  </div>
+                  <span class="bearing-type-badge badge-rol">1 Reaksi (Hanya Rv)</span>
+                </div>
+                <div class="bearing-3d-visual" id="bearing-3d-rol"></div>
+                <div class="dof-analysis-box">
+                  <h4>Derajat Kebebasan (Gerak):</h4>
+                  <div class="dof-grid">
+                    <div class="dof-item"><span class="dof-title">Vertikal (Y)</span><span class="dof-status status-reaksi">🔒 Tertahan (Rv)</span></div>
+                    <div class="dof-item"><span class="dof-title">Horizontal (X)</span><span class="dof-status status-bebas">🔓 Bebas Bergulir</span></div>
+                    <div class="dof-item"><span class="dof-title">Rotasi (M)</span><span class="dof-status status-bebas">🔓 Bebas Berputar</span></div>
+                  </div>
+                </div>
+                <div class="bearing-construction-case">
+                  <strong>Kasus Nyata:</strong> Wajib dipasang pada satu ujung jembatan bentang panjang. Roda silinder memungkinkan balok memuai dan menyusut secara bebas saat perubahan suhu ekstrem tanpa meretakkan pilar.
+                </div>
+                <div class="bearing-test-bar">
+                  <button class="btn-test-dof" onclick="window.bearingLab.testMovement('rol', 'horizontal', 'rol-test-feedback')">Uji Geser Horisontal</button>
+                  <button class="btn-test-dof" onclick="window.bearingLab.testMovement('rol', 'rotasi', 'rol-test-feedback')">Uji Rotasi</button>
+                </div>
+                <div id="rol-test-feedback" style="font-size: 0.8rem; min-height: 48px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">
+                  <em>Klik tombol uji di atas untuk melihat silinder rol bergulir mulus di atas pelat baja landasan.</em>
+                </div>
+              </div>
+
+              <!-- Jepit -->
+              <div class="bearing-interactive-card">
+                <div class="bearing-card-header">
+                  <div>
+                    <h3>3. Tumpuan Jepit (Fixed)</h3>
+                    <p style="font-size: 0.82rem; color: var(--text-muted);">Fixed Base / Rigid Connection</p>
+                  </div>
+                  <span class="bearing-type-badge badge-jepit">3 Reaksi (Rv, Rh, M)</span>
+                </div>
+                <div class="bearing-3d-visual" id="bearing-3d-jepit"></div>
+                <div class="dof-analysis-box">
+                  <h4>Derajat Kebebasan (Gerak):</h4>
+                  <div class="dof-grid">
+                    <div class="dof-item"><span class="dof-title">Vertikal (Y)</span><span class="dof-status status-reaksi">🔒 Tertahan (Rv)</span></div>
+                    <div class="dof-item"><span class="dof-title">Horizontal (X)</span><span class="dof-status status-reaksi">🔒 Tertahan (Rh)</span></div>
+                    <div class="dof-item"><span class="dof-title">Rotasi (M)</span><span class="dof-status status-reaksi">🔒 Tertahan Kaku (M)</span></div>
+                  </div>
+                </div>
+                <div class="bearing-construction-case">
+                  <strong>Kasus Nyata:</strong> Sambungan dasar kolom baja ke tiang pondasi dengan 4-8 angkur tebal, atau balok kantilever kanopi balkon yang dicor menyatu monolit dengan dinding beton.
+                </div>
+                <div class="bearing-test-bar">
+                  <button class="btn-test-dof" onclick="window.bearingLab.testMovement('jepit', 'horizontal', 'jepit-test-feedback')">Uji Goyang Horisontal</button>
+                  <button class="btn-test-dof" onclick="window.bearingLab.testMovement('jepit', 'rotasi', 'jepit-test-feedback')">Uji Tahanan Momen</button>
+                </div>
+                <div id="jepit-test-feedback" style="font-size: 0.8rem; min-height: 48px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">
+                  <em>Klik tombol uji untuk mengamati bagaimana dinding jepit kaku menahan semua gerakan.</em>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ================================================================
+             VIEW 4: SIMULASI STRUKTUR 3D (MULTI-STRUKTUR & PELETAKAN BEBAN)
+             ================================================================ -->
+        <section class="page-view" id="view-simulation">
+          
+          <div class="section-header">
+            <h3>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              Laboratorium Simulasi 3D Multi-Struktur & Peletakan Beban
+            </h3>
+            <p>Pilih tipe struktur konstruksi, letakkan beban di titik tertentu dengan mengeklik model atau tombol pintas, lalu amati respon reaksi tumpuan.</p>
+          </div>
+
+          <!-- Switcher Tipe Struktur 3D -->
+          <div class="structure-type-strip">
+            <span class="type-strip-label">Pilih Struktur Konstruksi:</span>
+            <button class="btn-struct-type active" data-struct="beam">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
+              <span>1. Balok Portal Gedung</span>
+            </button>
+            <button class="btn-struct-type" data-struct="roofTruss">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 3 2 21 22 21"/></svg>
+              <span>2. Kuda-Kuda Rangka Atap 3D</span>
+            </button>
+            <button class="btn-struct-type" data-struct="bridge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 18h20M2 18l5-10 5 10 5-10 5 10"/></svg>
+              <span>3. Jembatan Rangka Baja Warren</span>
+            </button>
+          </div>
+
+          <div class="simulation-layout">
+            
+            <!-- Kolom Visual 3D -->
+            <div class="sim-visual-column">
+              <div class="sim-canvas-card">
+                
+                <!-- HUD Reaction Indicators -->
+                <div class="reaction-hud-top">
+                  <div class="hud-bearing-indicator">
+                    <span class="hud-bearing-title">Tumpuan A (Sendi)</span>
+                    <div class="hud-bearing-visual-bar">
+                      <div class="hud-bar-fill" id="hud-fill-a" style="width: 62%;"></div>
+                    </div>
+                    <span class="hud-bearing-status" id="hud-status-a">Menerima Porsi Lebih Besar</span>
+                  </div>
+
+                  <div class="hud-bearing-indicator" style="text-align: right;">
+                    <span class="hud-bearing-title">Tumpuan B (Rol)</span>
+                    <div class="hud-bearing-visual-bar">
+                      <div class="hud-bar-fill" id="hud-fill-b" style="width: 38%;"></div>
+                    </div>
+                    <span class="hud-bearing-status" id="hud-status-b">Menerima Porsi Lebih Kecil</span>
+                  </div>
+                </div>
+
+                <!-- 3D Canvas -->
+                <div id="sim-3d-viewport" class="three-canvas-container"></div>
+
+                <div class="viewport-hint-bottom">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  <span>💡 <strong>Klik titik buhul atau permukaan struktur 3D</strong> untuk langsung meletakkan beban di sana!</span>
+                </div>
+              </div>
+
+              <!-- Beam Qualitative Info Bar -->
+              <div class="beam-qualitative-bar">
+                <div class="qualitative-metric">
+                  <div class="metric-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+                  </div>
+                  <div class="metric-text">
+                    <h5>Posisi Titik Beban</h5>
+                    <p id="metric-load-position-desc">Cenderung Mendekati Tumpuan Kiri (A)</p>
+                  </div>
+                </div>
+
+                <div class="qualitative-metric">
+                  <div class="metric-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  </div>
+                  <div class="metric-text">
+                    <h5>Status Kesetimbangan</h5>
+                    <p style="color: #6ee7b7;">Stabil (ΣV = 0, ΣM = 0)</p>
+                  </div>
+                </div>
+
+                <button class="btn-viewport-action" id="btn-reset-sim">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                  <span>Reset Tampilan</span>
+                </button>
+              </div>
+
+              <!-- Tombol Peletakan Beban Tertentu -->
+              <div class="load-presets-group">
+                <span class="info-label">Pintasan Peletakan Beban Tertentu:</span>
+                <div class="presets-row">
+                  <button class="btn-load-preset" data-ratio="0.05">Tumpuan A (0%)</button>
+                  <button class="btn-load-preset" data-ratio="0.25">1/4 Bentang (25%)</button>
+                  <button class="btn-load-preset" data-ratio="0.5">Tengah Bentang (50%)</button>
+                  <button class="btn-load-preset" data-ratio="0.75">3/4 Bentang (75%)</button>
+                  <button class="btn-load-preset" data-ratio="0.95">Tumpuan B (100%)</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Kolom Guided Discovery -->
+            <div class="discovery-panel">
+              <div class="discovery-stepper-header">
+                <span class="stepper-progress-pill" id="stepper-current-label">Langkah 1 dari 7: 1. AMATI</span>
+                <div class="stepper-nav-dots">
+                  <div class="step-dot active" data-step="1">1</div>
+                  <div class="step-dot" data-step="2">2</div>
+                  <div class="step-dot" data-step="3">3</div>
+                  <div class="step-dot" data-step="4">4</div>
+                  <div class="step-dot" data-step="5">5</div>
+                  <div class="step-dot" data-step="6">6</div>
+                  <div class="step-dot" data-step="7">7</div>
+                </div>
+              </div>
+
+              <!-- PANE 1: AMATI -->
+              <div class="step-content-pane active" id="step-pane-1">
+                <div class="step-title-row">
+                  <span style="font-size: 1.5rem;">🔍</span>
+                  <h3>1. Tahap AMATI</h3>
+                </div>
+                <div class="step-prompt-box">
+                  Amati struktur yang sedang aktif di viewport 3D (kamu bisa mengganti ke <strong>Balok Gedung</strong>, <strong>Rangka Atap Kuda-Kuda</strong>, atau <strong>Jembatan Warren</strong> lewat tombol di atas).
+                  Perhatikan posisi tumpuan Sendi (A) dan Rol (B), serta letak beban muatan.
+                </div>
+                <p style="font-size: 0.86rem; color: var(--text-muted);">
+                  Coba klik langsung pada model 3D untuk memindahkan posisi beban derek/truk!
+                </p>
+              </div>
+
+              <!-- PANE 2: IDENTIFIKASI -->
+              <div class="step-content-pane" id="step-pane-2">
+                <div class="step-title-row">
+                  <span style="font-size: 1.5rem;">🏷️</span>
+                  <h3>2. Tahap IDENTIFIKASI</h3>
+                </div>
+                <div class="step-prompt-box">
+                  Identifikasi komponen penting struktur ini:
+                  <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li><strong>Panjang Bentang (L):</strong> Jarak total antara Tumpuan A ke Tumpuan B.</li>
+                    <li><strong>Titik Beban (P):</strong> Posisi di mana gaya berat bekerja ke arah bawah.</li>
+                    <li><strong>Lengan Momen:</strong> Jarak titik beban ke Tumpuan A (a) dan jarak ke Tumpuan B (b).</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- PANE 3: PREDIKSI -->
+              <div class="step-content-pane" id="step-pane-3">
+                <div class="step-title-row">
+                  <span style="font-size: 1.5rem;">🤔</span>
+                  <h3>3. Tahap PREDIKSI</h3>
+                </div>
+                <div class="step-prompt-box">
+                  <strong>Tantangan Prediksi untuk Siswa:</strong><br>
+                  "Jika beban digeser mendekati <strong>Tumpuan A</strong>, menurut analisismu tumpuan mana yang akan menerima gaya reaksi vertikal paling besar?"
+                </div>
+                <div class="prediction-options">
+                  <button class="prediction-btn" data-predict="A">
+                    <span style="font-weight: 800; color: #38bdf8;">Opsi 1:</span>
+                    <span>Tumpuan A menerima reaksi lebih besar dibanding Tumpuan B</span>
+                  </button>
+                  <button class="prediction-btn" data-predict="B">
+                    <span style="font-weight: 800; color: #fbbf24;">Opsi 2:</span>
+                    <span>Tumpuan B menerima reaksi lebih besar dibanding Tumpuan A</span>
+                  </button>
+                  <button class="prediction-btn" data-predict="equal">
+                    <span style="font-weight: 800; color: #10b981;">Opsi 3:</span>
+                    <span>Kedua tumpuan selalu menerima reaksi sama besar</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- PANE 4: MANIPULASI -->
+              <div class="step-content-pane" id="step-pane-4">
+                <div class="step-title-row">
+                  <span style="font-size: 1.5rem;">🎛️</span>
+                  <h3>4. Tahap MANIPULASI</h3>
+                </div>
+                <div class="step-prompt-box">
+                  Geser slider di bawah ini atau <strong>klik langsung salah satu titik buhul pada model 3D</strong> untuk memindahkan beban:
+                </div>
+                <div class="sim-controls-group">
+                  <div class="slider-container">
+                    <div class="slider-header">
+                      <span class="slider-label">Posisi Beban dari Tumpuan A (a):</span>
+                      <span class="slider-value-badge" id="val-load-pos">3.0 m</span>
+                    </div>
+                    <input type="range" class="sim-slider" id="slider-load-pos" min="0.5" max="7.5" step="0.2" value="3.0">
+                  </div>
+                  <div class="slider-container">
+                    <div class="slider-header">
+                      <span class="slider-label">Besar Beban Gravitasi (P):</span>
+                      <span class="slider-value-badge" id="val-load-mag">50 kN</span>
+                    </div>
+                    <input type="range" class="sim-slider" id="slider-load-mag" min="10" max="100" step="5" value="50">
+                  </div>
+                  <div class="slider-container">
+                    <div class="slider-header">
+                      <span class="slider-label">Panjang Bentang (L):</span>
+                      <span class="slider-value-badge" id="val-span-len">8.0 m</span>
+                    </div>
+                    <input type="range" class="sim-slider" id="slider-span-len" min="4" max="12" step="1" value="8">
+                  </div>
+                </div>
+              </div>
+
+              <!-- PANE 5: HITUNG -->
+              <div class="step-content-pane" id="step-pane-5">
+                <div class="step-title-row">
+                  <span style="font-size: 1.5rem;">✍️</span>
+                  <h3>5. Tahap HITUNG MANDIRI</h3>
+                </div>
+                <div class="step-prompt-box">
+                  Gunakan konsep kesetimbangan momen statis untuk menguji perhitunganmu:
+                  <div style="background: rgba(0,0,0,0.25); padding: 10px; border-radius: 6px; margin: 8px 0; font-family: monospace;">
+                    ΣMB = 0 ➔ <strong>RA = P x (b / L)</strong><br>
+                    ΣMA = 0 ➔ <strong>RB = P x (a / L)</strong>
+                  </div>
+                  <em>Hitung secara mandiri lalu cocokkan dengan arah dan ukuran panah reaksi visual!</em>
+                </div>
+                <button class="btn-viewport-action" id="btn-show-hint" style="width: 100%; justify-content: center;">
+                  <span>💡 Lihat Petunjuk Konsep Lengan Momen</span>
+                </button>
+                <div class="feedback-box" id="sim-hint-feedback"></div>
+              </div>
+
+              <!-- PANE 6: VERIFIKASI -->
+              <div class="step-content-pane" id="step-pane-6">
+                <div class="step-title-row">
+                  <span style="font-size: 1.5rem;">✅</span>
+                  <h3>6. Tahap VERIFIKASI</h3>
+                </div>
+                <div class="step-prompt-box">
+                  Periksa apakah prediksimu pada Langkah 3 telah sesuai dengan respon visual struktur saat ini:
+                </div>
+                <button class="btn-primary" id="btn-verify-answer" style="width: 100%; justify-content: center;">
+                  <span>Verifikasi Jawaban Saya</span>
+                </button>
+                <div class="feedback-box" id="sim-verify-feedback"></div>
+              </div>
+
+              <!-- PANE 7: REFLEKSI -->
+              <div class="step-content-pane" id="step-pane-7">
+                <div class="step-title-row">
+                  <span style="font-size: 1.5rem;">💡</span>
+                  <h3>7. Tahap REFLEKSI</h3>
+                </div>
+                <div class="step-prompt-box">
+                  <strong>Kesimpulan Hukum Statika yang Ditemukan:</strong>
+                  <ol style="margin-left: 20px; margin-top: 8px; line-height: 1.6;">
+                    <li>Distribusi gaya reaksi tumpuan selalu berbanding terbalik dengan jarak beban terhadap tumpuan tersebut.</li>
+                    <li>Tumpuan yang paling dekat dengan titik tangkap beban memikul beban paling dominan.</li>
+                    <li>Pada rangka atap & jembatan, beban di simpul diteruskan melalui gaya tarik (batang biru) dan tekan (batang merah) ke pilar tumpuan.</li>
+                  </ol>
+                </div>
+              </div>
+
+              <div class="stepper-actions">
+                <button class="btn-step-prev" id="btn-step-prev" disabled>Kembali</button>
+                <button class="btn-step-next" id="btn-step-next">
+                  <span>Lanjut Langkah Berikutnya</span>
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ================================================================
+             VIEW BARU: STUDIO GAMBAR STRUKTUR MANDIRI (SANDBOX)
+             ================================================================ -->
+        <section class="page-view" id="view-sandbox">
+          
+          <div class="section-header">
+            <h3>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
+              Studio Rancang Bangun: Gambar & Berikan Beban Sendiri
+            </h3>
+            <p>Siswa dapat menggambar titik buhul, menghubungkan batang, memasang tumpuan (sendi/rol/jepit), dan meletakkan beban bebas untuk mengamati respon statikanya.</p>
+          </div>
+
+          <div class="sandbox-layout">
+            
+            <div class="sandbox-main-area">
+              <!-- Toolbar Peralatan Gambar -->
+              <div class="sandbox-toolbar">
+                <div class="sandbox-tools-group">
+                  <button class="btn-sandbox-tool active" data-tool="add-member">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="19" x2="19" y2="5"/></svg>
+                    <span>1. Tarik Batang</span>
+                  </button>
+                  <button class="btn-sandbox-tool" data-tool="add-node">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="6"/></svg>
+                    <span>2. Titik Buhul</span>
+                  </button>
+                  <button class="btn-sandbox-tool" data-tool="support-sendi">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 4 4 20 20 20"/></svg>
+                    <span>3. Pasang Sendi</span>
+                  </button>
+                  <button class="btn-sandbox-tool" data-tool="support-rol">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><circle cx="7" cy="19" r="2"/><circle cx="17" cy="19" r="2"/></svg>
+                    <span>4. Pasang Rol</span>
+                  </button>
+                  <button class="btn-sandbox-tool" data-tool="support-jepit">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="21"/></svg>
+                    <span>5. Pasang Jepit</span>
+                  </button>
+                  <button class="btn-sandbox-tool" data-tool="add-load">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                    <span>6. Taruh Beban</span>
+                  </button>
+                  <button class="btn-sandbox-tool" data-tool="delete" style="color: #ef4444;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                    <span>Hapus</span>
+                  </button>
+                </div>
+
+                <button class="btn-secondary" id="btn-clear-sandbox" style="font-size: 0.78rem; padding: 6px 12px; color: #f87171;">
+                  Bersihkan Kanvas
+                </button>
+              </div>
+
+              <!-- Interactive Canvas -->
+              <div class="sandbox-canvas-wrapper">
+                <canvas id="sandbox-canvas"></canvas>
+              </div>
+
+              <!-- Hint Bar -->
+              <div class="sandbox-hint-bar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <span id="sandbox-hint-text">Klik titik pertama, lalu klik titik kedua untuk menyambung Batang Struktur.</span>
+              </div>
+            </div>
+
+            <!-- Panel Kontrol & Template Cepat -->
+            <div class="sandbox-side-controls">
+              
+              <button class="btn-primary" id="btn-run-sandbox-sim" style="width: 100%; justify-content: center; font-size: 1rem; padding: 14px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>Simulasikan Struktur Saya</span>
+              </button>
+
+              <!-- Panel Hasil Analisis -->
+              <div id="sandbox-results-panel">
+                <div style="color: var(--text-muted); font-size: 0.88rem;">
+                  Klik tombol <strong>"Simulasikan Struktur Saya"</strong> untuk menghitung reaksi tumpuan dan melihat distribusi gaya tarik (biru) vs tekan (merah).
+                </div>
+              </div>
+
+              <!-- Template Cepat Struktur -->
+              <div>
+                <span class="info-label" style="display: block; margin-bottom: 8px;">Pilih Contoh Template Cepat:</span>
+                <div class="template-pills-grid">
+                  <div class="btn-template-pill" data-template="roofTruss">
+                    <strong>Kuda-Kuda Atap</strong>
+                    <span>Rangka segitiga Pratt</span>
+                  </div>
+                  <div class="btn-template-pill" data-template="bridge">
+                    <strong>Jembatan Warren</strong>
+                    <span>Rangka jembatan baja</span>
+                  </div>
+                  <div class="btn-template-pill" data-template="beam">
+                    <strong>Balok Sederhana</strong>
+                    <span>2 tumpuan sendi-rol</span>
+                  </div>
+                  <div class="btn-template-pill" data-template="cantilever">
+                    <strong>Balok Kantilever</strong>
+                    <span>Tumpuan jepit 1 sisi</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Panduan Ringkas Gambar -->
+              <div style="background: var(--bg-card-alt); border-radius: 8px; padding: 14px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                <strong style="color: #fbbf24;">Tips Praktis Merancang:</strong>
+                <ol style="margin-left: 16px; margin-top: 6px;">
+                  <li>Pilih <strong>Tarik Batang</strong> lalu klik dua titik untuk membuat batang.</li>
+                  <li>Gunakan <strong>Pasang Sendi</strong> & <strong>Pasang Rol</strong> di titik bawah.</li>
+                  <li>Gunakan <strong>Taruh Beban</strong> untuk meletakkan gaya gravitasi di titik buhul yang diinginkan.</li>
+                  <li>Klik tombol oranye <strong>Simulasikan Struktur Saya</strong>.</li>
+                </ol>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ================================================================
+             VIEW 5: DIAGRAM GAYA DALAM (N, V, M)
+             ================================================================ -->
+        <section class="page-view" id="view-diagrams">
+          
+          <div class="section-header">
+            <h3>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Diagram Gaya Dalam: Bidang N, V, dan M Interaktif
+            </h3>
+            <p>Amati bagaimana bentuk diagram gaya lintang dan momen lentur berubah secara real-time saat posisi beban bergeser.</p>
+          </div>
+
+          <div class="diagrams-dashboard-layout">
+            <div class="diagrams-display-column">
+              <div class="diagram-canvas-card">
+                <div class="diagram-header">
+                  <div class="diagram-title-wrap">
+                    <h4>Bidang Momen Lentur (M)</h4>
+                    <span class="diagram-badge badge-m">Tarik di Bawah (+)</span>
+                  </div>
+                  <span style="font-size: 0.8rem; color: var(--text-muted);">Puncak Segitiga Tepat di Bawah Beban</span>
+                </div>
+                <div class="diagram-canvas-container">
+                  <canvas id="canvas-diag-m"></canvas>
+                </div>
+              </div>
+
+              <div class="diagram-canvas-card">
+                <div class="diagram-header">
+                  <div class="diagram-title-wrap">
+                    <h4>Bidang Gaya Lintang (V / D)</h4>
+                    <span class="diagram-badge badge-v">Gaya Geser Balok</span>
+                  </div>
+                  <span style="font-size: 0.8rem; color: var(--text-muted);">Loncat Sebesar Beban Terpusat P</span>
+                </div>
+                <div class="diagram-canvas-container">
+                  <canvas id="canvas-diag-v"></canvas>
+                </div>
+              </div>
+
+              <div class="diagram-canvas-card">
+                <div class="diagram-header">
+                  <div class="diagram-title-wrap">
+                    <h4>Bidang Gaya Normal (N)</h4>
+                    <span class="diagram-badge badge-n">Gaya Aksial Batang</span>
+                  </div>
+                  <span style="font-size: 0.8rem; color: var(--text-muted);">Sejajar Sumbu Balok</span>
+                </div>
+                <div class="diagram-canvas-container">
+                  <canvas id="canvas-diag-n"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div class="diagrams-side-explainer">
+              <div class="construction-physical-meaning">
+                <h4>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  Makna Fisik Bidang Momen (M):
+                </h4>
+                <p>
+                  Momen lentur menyebabkan balok melengkung ke bawah. Serat bawah tertarik sehingga tulangan baja utama pada proyek beton selalu dipasang pada <strong>sisi bawah balok</strong> di zona momen positif terbesar!
+                </p>
+              </div>
+
+              <div class="construction-physical-meaning" style="border-left-color: #38bdf8;">
+                <h4 style="color: #38bdf8;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  Makna Fisik Gaya Lintang (V):
+                </h4>
+                <p>
+                  Tegangan geser tertinggi terjadi di dekat tumpuan pilar. Bila melampaui batas, akan timbul retak miring 45°. Oleh karena itu, sengkang begel di lapangan selalu <strong>dipasang lebih rapat di dekat tumpuan</strong> daripada di tengah bentang!
+                </p>
+              </div>
+
+              <button class="btn-primary" onclick="window.appRouter.navigateTo('simulation')">
+                <span>Uji di Simulasi 3D</span>
+              </button>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ================================================================
+             VIEW 6: KUIS STATIKA BANGUNAN
+             ================================================================ -->
+        <section class="page-view" id="view-quiz">
+          <div class="quiz-container">
+            <div class="section-header" style="text-align: center; margin-bottom: 8px;">
+              <h3>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/></svg>
+                Kuis Analisis Kasus Konstruksi Statika Bangunan
+              </h3>
+              <p>Pilih jawaban terbaik berdasarkan diagram visual dan prinsip kesetimbangan struktur.</p>
+            </div>
+
+            <div class="quiz-card">
+              <div class="quiz-meta-bar">
+                <span class="quiz-counter" id="quiz-counter-text">Soal 1 dari 6</span>
+                <span class="quiz-category-tag" id="quiz-cat-text">Identifikasi Tumpuan</span>
+              </div>
+              <div class="quiz-visual-case" id="quiz-diagram-case"></div>
+              <h4 class="quiz-question-text" id="quiz-question-title">Loading soal...</h4>
+              <div class="quiz-options-list" id="quiz-options-container"></div>
+              <div class="quiz-explanation-box" id="quiz-explanation-panel"></div>
+              <div style="display: flex; justify-content: flex-end;">
+                <button class="btn-primary" id="btn-quiz-next" style="display: none;">Lanjut ke Soal Berikutnya</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ================================================================
+             VIEW 7: PROGRES BELAJAR SISWA
+             ================================================================ -->
+        <section class="page-view" id="view-progress">
+          <div class="section-header">
+            <h3>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+              Rekapitulasi Progres Belajar Siswa
+            </h3>
+            <p>Pantau ketercapaian kompetensi pembelajaran Statika Bangunan Fase E dan koleksi lencana pencapaianmu.</p>
+          </div>
+
+          <div class="progress-overview-grid">
+            <div class="progress-stat-card">
+              <div class="stat-icon" style="background: rgba(14, 165, 233, 0.15); color: #38bdf8;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
+              </div>
+              <div class="stat-info">
+                <h3 id="stat-modules-completed">1 / 6 Modul (16%)</h3>
+                <p>Eksplorasi Modul Pembelajaran</p>
+              </div>
+            </div>
+
+            <div class="progress-stat-card">
+              <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <div class="stat-info">
+                <h3 id="stat-sim-count">0 Kali</h3>
+                <p>Eksperimen Simulasi Dijalankan</p>
+              </div>
+            </div>
+
+            <div class="progress-stat-card">
+              <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/></svg>
+              </div>
+              <div class="stat-info">
+                <h3 id="stat-quiz-score">0 Poin</h3>
+                <p>Skor Evaluasi Kuis</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="badges-showcase-card">
+            <h4>Lencana Kompetensi Konstruksi (Badges)</h4>
+            <div class="badges-grid">
+              <div class="badge-item-card unlocked" id="badge-card-pondasi"><div class="badge-emblem">🏗️</div><h4>Pondasi Awal</h4><p>Membuka aplikasi StructBuild.</p><div class="badge-status"><span style="color:#10b981; font-weight:700;">✅ Terbuka</span></div></div>
+              <div class="badge-item-card locked" id="badge-card-inspektur"><div class="badge-emblem">🔍</div><h4>Inspektur Elemen</h4><p>Mengeksplorasi model gedung 3D.</p><div class="badge-status">🔒 Belum Selesai</div></div>
+              <div class="badge-item-card locked" id="badge-card-tumpuan"><div class="badge-emblem">⚙️</div><h4>Ahli Tumpuan Lapangan</h4><p>Menguji derajat kebebasan sendi, rol, dan jepit.</p><div class="badge-status">🔒 Belum Selesai</div></div>
+              <div class="badge-item-card locked" id="badge-card-penemu"><div class="badge-emblem">🎯</div><h4>Master Keseimbangan</h4><p>Menuntaskan alur 7 langkah Guided Discovery.</p><div class="badge-status">🔒 Belum Selesai</div></div>
+              <div class="badge-item-card locked" id="badge-card-diagram"><div class="badge-emblem">📊</div><h4>Detektif Gaya Dalam</h4><p>Menganalisis diagram V dan M.</p><div class="badge-status">🔒 Belum Selesai</div></div>
+              <div class="badge-item-card locked" id="badge-card-juara"><div class="badge-emblem">🏆</div><h4>Juara Statika Bangunan</h4><p>Skor kuis di atas 80.</p><div class="badge-status">🔒 Belum Selesai</div></div>
+            </div>
+
+            <div style="margin-top: 32px; display: flex; justify-content: flex-end;">
+              <button class="btn-secondary" onclick="window.learningProgress.resetAll()" style="font-size: 0.85rem; color: #ef4444;">
+                Reset Riwayat Belajar
+              </button>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+
+    </main>
+
+  </div>
+
+
+  <!-- ====================================================================
+       MODAL 1: PETUNJUK PENGGUNAAN
+       ==================================================================== -->
+  <div class="modal-backdrop" id="quick-guide-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>📖 Petunjuk Penggunaan StructBuild</h3>
+        <button class="btn-close-modal" id="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Selamat datang di StructBuild!</strong> Platform ini dirancang khusus untuk siswa SMK Teknik Konstruksi dan Perumahan (TKP) Fase E materi Statika Bangunan.</p>
+        <br>
+        <p><strong>Fitur Unggulan Baru:</strong></p>
+        <ul style="margin-left: 20px; margin-top: 6px; line-height: 1.6;">
+          <li><strong>3 Tipe Struktur 3D:</strong> Kamu bisa berganti antara Balok Portal, Rangka Atap Kuda-Kuda, dan Jembatan Rangka Baja Warren.</li>
+          <li><strong>Klik Peletakan Beban:</strong> Klik langsung titik buhul atau permukaan 3D untuk meletakkan beban derek/truk di titik yang kamu inginkan.</li>
+          <li><strong>Studio Gambar Sendiri:</strong> Masuk ke menu <em>Studio Gambar Mandiri</em> untuk membuat titik buhul, menarik batang, memasang tumpuan, dan menganalisis reaksi bebanmu sendiri.</li>
+        </ul>
+      </div>
+      <div style="display: flex; justify-content: flex-end;">
+        <button class="btn-primary" onclick="document.getElementById('quick-guide-modal').classList.remove('active')">
+          Saya Mengerti, Mulai Belajar!
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ====================================================================
+       MODAL 2: PANDUAN GOOGLE CHROME & PUBLISH ONLINE (AGAR BISA DICARI)
+       ==================================================================== -->
+  <div class="modal-backdrop" id="chrome-guide-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🌐 Panduan Akses di Google Chrome & Online</h3>
+        <button class="btn-close-modal" id="btn-close-chrome-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>1. Menjalankan di Google Chrome Lokal:</strong></p>
+        <p>Tersedia file pintasan <code>Buka-StructBuild.bat</code> di folder proyek. Cukup klik ganda (double click) file tersebut, dan StructBuild akan langsung terbuka otomatis di Google Chrome!</p>
+        <br>
+        <p><strong>2. Agar Bisa Dicari Siswa di Google Search (Online Gratis):</strong></p>
+        <p>Agar seluruh siswa SMK TKP di Indonesia bisa mencari website ini di Google Chrome secara publik di internet, website ini sudah siap diunggah (*production-ready*) dengan 3 pilihan hosting gratis 100%:</p>
+        <ul style="margin-left: 20px; margin-top: 6px; line-height: 1.6;">
+          <li><strong>GitHub Pages:</strong> Upload folder ini ke repositori GitHub, aktifkan <em>Pages</em> di Settings. Website langsung tayang di <code>https://nama-anda.github.io/structbuild</code></li>
+          <li><strong>Vercel / Netlify:</strong> Tarik folder <code>structbuild</code> langsung ke dashboard Vercel/Netlify. Website langsung online dalam 10 detik!</li>
+          <li><strong>PWA Install:</strong> Di browser Google Chrome, klik ikon "Install StructBuild" di bilah alamat URL atas agar website terpasang seperti aplikasi desktop komputer.</li>
+        </ul>
+      </div>
+      <div style="display: flex; justify-content: flex-end;">
+        <button class="btn-primary" onclick="document.getElementById('chrome-guide-modal').classList.remove('active')">
+          Tutup Panduan
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Module Scripts -->
+  <script src="js/structure-3d.js"></script>
+  <script src="js/components-3d.js"></script>
+  <script src="js/bearings-3d.js"></script>
+  <script src="js/sandbox.js"></script>
+  <script src="js/diagrams.js"></script>
+  <script src="js/simulation.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
